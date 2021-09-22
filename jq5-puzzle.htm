@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="game"></div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+            $(() => { 
+                const game = $("#game");
+                let winWidth = $(window).width(); 
+                $("body").css("margin", "0");
+                game.css({
+                    position: "relative",
+                    width: "800px",
+                    height: "600px",
+                    'box-sizing': "border-box", 
+                    border: "1px solid #666",
+                    "background-image": "url('img/puzzle.jpg')"
+                })
+                for(let i = 0; i < 6; i++){ 
+                    for(let j = 0; j < 8; j++){
+                        game.append('<div id="d' + i + j + '"></div>');
+                    }  
+                }
+                for(let i = 0; i < 6; i++){
+                    for(let j = 0; j < 8; j++){
+                        let id = "#d" + i + j;
+                        $(id).css({
+                            width: "100px",
+                            height: "100px",
+                            position: "absolute",
+                            'box-sizing': "border-box",
+                            border: "1px solid #eee",
+                            top: rand(20, 500) + "px",
+                            left: rand(820, winWidth -150) + "px",
+                            "background-image": "url('cartoon.jpg')",
+                            "background-position": (-100 * j) + "px " + (-100 * i) + "px", //j =x;i =y;  
+                            "box-shadow": "0 0 5px #333",
+                            transform: "rotate(" + rand(-10, 10) + "deg)"
+                        }) 
+                    }  
+                }
+
+                $("#game>div").draggable({
+                    //grid: [ 100, 100 ]
+                    snap: true,
+                    start: function(event, ui) {
+                        //console.log(ui, event)
+                        $(this).css({
+                            "z-index": 99,
+                            transform: "rotate(0deg)"
+                            
+                        })
+                    },
+                    stop: function(event, ui) {
+                        console.log($(this).position().top)
+                        $(this).css({
+                            top: 100 * Math.round($(this).position().top / 100) + "px",
+                            left: 100 * Math.round($(this).position().left / 100) + "px"
+
+                        })
+                        if (finishGame()) alert("Congratulations!"); 
+                    }
+                });
+
+                function finishGame(){
+                    for(let i = 0; i < 6; i++){
+                        for(let j = 0; j < 8; j++){
+                            if($("#d" + i + j).position().top != (100*i) && $("#d" + i + j).position().left != (100*j)) return false; 
+                        }
+                    }
+                    return true; 
+                }
+                function rand(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1) ) + min;
+                }
+            })
+        </script>
+    </body>
+</html>
